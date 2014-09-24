@@ -1,9 +1,9 @@
-require 'spec_helper'
+require 'tictactoe/spec_helper'
 
-require 'board'
+require 'tictactoe/board'
 
-describe Board do
-  let(:board) { Board.new }
+describe TicTacToe::Board do
+  let(:board) { described_class.new }
 
   it 'is empty when just created' do
     expect(board.empty?).to be true
@@ -30,17 +30,17 @@ describe Board do
 
   it 'locations can not be set more than once' do
     board = board_with('x        ')
-    expect { board.set_move(1, 'o') }.to raise_error(Board::InvalidMove)
+    expect { board.set_move(1, 'o') }.to raise_error(TicTacToe::Board::InvalidMove)
   end
 
   it 'only accepts numbers as locations' do
     board = board_with('         ')
-    expect { board.set_move('1', 'o') }.to raise_error(Board::InvalidMove)
+    expect { board.set_move('1', 'o') }.to raise_error(TicTacToe::Board::InvalidMove)
   end
 
   it 'move locations need to be within board\'s boundaries' do
     board = board_with('         ')
-    expect { board.set_move(0, 'o') }.to raise_error(Board::InvalidMove)
+    expect { board.set_move(0, 'o') }.to raise_error(TicTacToe::Board::InvalidMove)
   end
 
   it 'knows free locations' do
@@ -99,7 +99,7 @@ describe Board do
   end
 
   it 'can have different sizes' do
-    board = Board.new(4)
+    board = described_class.new(4)
     expect(board.free_locations.size).to eq 16
     expect(board.rows.flatten.size).to eq 16
   end
@@ -110,11 +110,11 @@ describe Board do
       :board_4x4 => 4
     }.each do |key, board_size|
       it ":#{key} is a valid board size" do
-        expect(Board.available_sizes).to include key
+        expect(described_class.available_sizes).to include key
       end
 
       it ":#{key} creates new #{board_size}*#{board_size} sized board" do
-        expect(Board.create(key).size).to eq board_size
+        expect(described_class.create(key).size).to eq board_size
       end
     end
   end

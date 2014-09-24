@@ -1,15 +1,15 @@
-require 'spec_helper'
+require 'tictactoe/spec_helper'
 
-require 'game'
-require 'board'
-require 'fake_player'
+require 'tictactoe/game'
+require 'tictactoe/board'
+require 'tictactoe/fake_player'
 
-describe Game do
-  let(:player_one) { FakePlayer.new('a', 1) }
-  let(:player_two) { FakePlayer.new('b', 2) }
+describe TicTacToe::Game do
+  let(:player_one) { TicTacToe::FakePlayer.new('a', 1) }
+  let(:player_two) { TicTacToe::FakePlayer.new('b', 2) }
   let(:board)      { board_with('         ') }
   let(:display)    { FakeIO.new }
-  let(:game)       { Game.new(player_one, player_two, board, display) }
+  let(:game)       { described_class.new(player_one, player_two, board, display) }
 
   context 'rules' do
     it 'switches players for each round' do
@@ -25,7 +25,7 @@ describe Game do
     it 'can only be played until its over' do
       game = game_with_board('aabababba')
 
-      expect { game.play_next_round }.to raise_error(Game::Over)
+      expect { game.play_next_round }.to raise_error(TicTacToe::Game::Over)
     end
   end
 
@@ -47,9 +47,9 @@ describe Game do
 
   context 'player interaction' do
     it 'in each round a player will be asked for its next move' do
-      player_one = FakePlayer.new('a', 5)
+      player_one = TicTacToe::FakePlayer.new('a', 5)
 
-      game = Game.new(player_one, player_two, board_with('baba bbaa'), display)
+      game = described_class.new(player_one, player_two, board_with('baba bbaa'), display)
       game.play_next_round
 
       expect(player_one.next_move_has_been_called).to be_truthy
@@ -68,25 +68,25 @@ describe Game do
     end
 
     it 'can be asked whether the round could be played' do
-      player_one = FakePlayer.new('a', 5)
-      game = Game.new(player_one, player_two, board_with('baba bbaa'), display)
+      player_one = TicTacToe::FakePlayer.new('a', 5)
+      game = described_class.new(player_one, player_two, board_with('baba bbaa'), display)
       game.play_next_round
 
       expect(game.round_could_be_played).to eq true
     end
 
     it 'throws exception if player is not ready' do
-      player_one = FakePlayer.new('a', 5)
+      player_one = TicTacToe::FakePlayer.new('a', 5)
       allow(player_one).to receive(:ready?).and_return(false)
-      game = Game.new(player_one, player_two, board_with('         '), display)
+      game = described_class.new(player_one, player_two, board_with('         '), display)
 
-      expect { game.play_next_round }.to raise_error Game::PlayerNotReady
+      expect { game.play_next_round }.to raise_error TicTacToe::Game::PlayerNotReady
     end
 
     it 'if player is not ready round can not be played' do
-      player_one = FakePlayer.new('a', 5)
+      player_one = TicTacToe::FakePlayer.new('a', 5)
       allow(player_one).to receive(:ready?).and_return(false)
-      game = Game.new(player_one, player_two, board_with('         '), display)
+      game = described_class.new(player_one, player_two, board_with('         '), display)
 
       expect(game.round_could_be_played).to eq false
     end
@@ -96,7 +96,7 @@ describe Game do
     it 'displays the board when creating a game' do
       expect(display).to receive(:show_board)
 
-      Game.new(player_one, player_two, board, display)
+      described_class.new(player_one, player_two, board, display)
     end
 
     it 'displays the board after every game round' do
@@ -108,7 +108,7 @@ describe Game do
 
     it 'announces the next player when creating a game' do
       expect(display).to receive(:announce_next_player).with(player_one.mark)
-      Game.new(player_one, player_two, board, display)
+      described_class.new(player_one, player_two, board, display)
     end
 
     it 'announces the next player after each round' do
@@ -120,28 +120,28 @@ describe Game do
     end
 
     it 'does not announce a next player when the game is over' do
-      game = Game.new(player_one, player_two, board_with(' bababbba'), display)
+      game = described_class.new(player_one, player_two, board_with(' bababbba'), display)
 
       expect(display).to_not receive(:announce_next_player)
       game.play_next_round
     end
 
     it 'announces the winner when there is one' do
-      game = Game.new(player_one, player_two, board_with(' baabaaab'), display)
+      game = described_class.new(player_one, player_two, board_with(' baabaaab'), display)
 
       expect(display).to receive(:announce_winner).with('a')
       game.play_next_round
     end
 
     it 'announces a draw' do
-      game = Game.new(player_one, player_two, board_with(' babbaaab'), display)
+      game = described_class.new(player_one, player_two, board_with(' babbaaab'), display)
 
       expect(display).to receive(:announce_draw)
       game.play_next_round
     end
 
     it 'displays a message on invalid moves' do
-      game = Game.new(player_one, player_two, board_with('b        '), display)
+      game = described_class.new(player_one, player_two, board_with('b        '), display)
 
       expect(display).to receive(:show_invalid_move_message)
       game.play_next_round
@@ -150,7 +150,7 @@ describe Game do
 
   context 'creating new games' do
     it 'knows what game modes are available' do
-      expect(Game.available_modes).to eq([
+      expect(described_class.available_modes).to eq([
         :human_human,
         :human_computer,
         :computer_human,
@@ -165,7 +165,7 @@ describe Game do
   end
 
   def game_with_board(board_state)
-    Game.new(player_one, player_two, board_with(board_state), display)
+    described_class.new(player_one, player_two, board_with(board_state), display)
   end
 
   class FakeIO

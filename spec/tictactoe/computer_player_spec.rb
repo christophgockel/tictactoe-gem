@@ -1,9 +1,9 @@
 require 'timeout'
-require 'spec_helper'
 
-require 'computer_player'
+require 'tictactoe/spec_helper'
+require 'tictactoe/computer_player'
 
-RSpec.describe ComputerPlayer do
+RSpec.describe TicTacToe::ComputerPlayer do
   subject { described_class.new('o', 'x') }
 
   it_should_behave_like 'a player'
@@ -188,7 +188,7 @@ RSpec.describe ComputerPlayer do
   context '4x4 boards' do
     it 'handles 4x4 boards' do
       board = board_with('x o x o  ooox   ', 4)
-      computer = ComputerPlayer.new('o', 'x')
+      computer = described_class.new('o', 'x')
 
       expect(computer.next_move(board)).to eq 9
     end
@@ -196,7 +196,7 @@ RSpec.describe ComputerPlayer do
     it 'takes < 3 seconds for its initial move' do
       Timeout::timeout(3) do
         board = board_with('                ', 4)
-        computer = ComputerPlayer.new('o', 'x')
+        computer = described_class.new('o', 'x')
 
         computer.next_move(board)
       end
@@ -204,7 +204,7 @@ RSpec.describe ComputerPlayer do
 
     it 'should block a possible win' do
       board = board_with('oxoo     x  xxxo', 4)
-      computer = ComputerPlayer.new('o', 'x')
+      computer = described_class.new('o', 'x')
 
       expect(computer.next_move(board)).to eq 6
     end
@@ -215,6 +215,6 @@ RSpec.describe ComputerPlayer do
   end
 
   def next_move_for(mark)
-    BoardHelper::Builder.new(ComputerPlayer.new(mark, mark == x ? o : x))
+    TicTacToe::BoardHelper::Builder.new(described_class.new(mark, mark == x ? o : x))
   end
 end

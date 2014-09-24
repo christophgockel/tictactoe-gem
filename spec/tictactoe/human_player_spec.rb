@@ -1,8 +1,8 @@
-require 'spec_helper'
+require 'tictactoe/spec_helper'
 
-require 'human_player'
+require 'tictactoe/human_player'
 
-describe HumanPlayer do
+describe TicTacToe::HumanPlayer do
   it_should_behave_like 'a player'
 
   let(:input) { double("Player IO", :next_move => 42, :can_provide_next_move? => true) }

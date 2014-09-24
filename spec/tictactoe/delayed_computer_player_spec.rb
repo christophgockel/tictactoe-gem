@@ -1,11 +1,11 @@
-require 'spec_helper'
+require 'tictactoe/spec_helper'
 
-require 'delayed_computer_player'
-require 'fake_player'
+require 'tictactoe/delayed_computer_player'
+require 'tictactoe/fake_player'
 
-describe DelayedComputerPlayer do
+describe TicTacToe::DelayedComputerPlayer do
   subject { described_class.new(fake_player) }
-  let(:fake_player) { FakePlayer.new('a', 8) }
+  let(:fake_player) { TicTacToe::FakePlayer.new('a', 8) }
 
   it_should_behave_like 'a player'
   before(:each) do
