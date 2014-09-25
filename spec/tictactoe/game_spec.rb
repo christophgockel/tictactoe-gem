@@ -27,6 +27,15 @@ describe TicTacToe::Game do
 
       expect { game.play_next_round }.to raise_error(TicTacToe::Game::Over)
     end
+
+    it 'is playable as long as it is ongoing' do
+      expect(game.is_playable?).to eq true
+    end
+
+    it 'is playable until a player is not ready anymore' do
+      allow(player_one).to receive(:ready?).and_return(false)
+      expect(game.is_playable?).to eq false
+    end
   end
 
   context 'end results' do

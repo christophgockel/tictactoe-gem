@@ -53,6 +53,10 @@ module TicTacToe
       next_player.ready?
     end
 
+    def is_playable?
+      is_ongoing? && is_ready?
+    end
+
     def winner
       return players.first.mark if board.winner?(players.first.mark)
       return players.last.mark  if board.winner?(players.last.mark)
