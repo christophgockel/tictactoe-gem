@@ -7,9 +7,6 @@ module TicTacToe
     class Over < RuntimeError
     end
 
-    class PlayerNotReady < RuntimeError
-    end
-
     def self.available_modes
       [
         :human_human,
@@ -31,20 +28,29 @@ module TicTacToe
     def play_next_round
       raise Over if is_ongoing? == false
 
-      place_move_of(players.first)
-      switch_players
-      update_display
-      @round_could_be_played = true
+      if next_player.ready?
+        place_move_of(next_player)
+        switch_players
+        update_display
+        @round_could_be_played = true
+      else
+        @round_could_be_played = false
+      end
     rescue Board::InvalidMove
       @round_could_be_played = false
       display.show_invalid_move_message
-    rescue PlayerNotReady
-      @round_could_be_played = false
-      raise
+    end
+
+    def next_player
+      players.first
     end
 
     def is_ongoing?
       board.is_completed? == false
+    end
+
+    def is_ready?
+      next_player.ready?
     end
 
     def winner
@@ -56,8 +62,6 @@ module TicTacToe
     private
 
     def place_move_of(player)
-      raise PlayerNotReady.new unless player.ready?
-
       move = player.next_move(board)
       board.set_move(move, player.mark)
     end

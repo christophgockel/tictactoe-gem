@@ -75,20 +75,28 @@ describe TicTacToe::Game do
       expect(game.round_could_be_played).to eq true
     end
 
-    it 'throws exception if player is not ready' do
-      player_one = TicTacToe::FakePlayer.new('a', 5)
-      allow(player_one).to receive(:ready?).and_return(false)
-      game = described_class.new(player_one, player_two, board_with('         '), display)
+    context 'player not ready' do
+      let(:player_one) { TicTacToe::FakePlayer.new('a', 5) }
+      let(:game) { described_class.new(player_one, player_two, board_with('         '), display) }
 
-      expect { game.play_next_round }.to raise_error TicTacToe::Game::PlayerNotReady
-    end
+      before :each do
+        allow(player_one).to receive(:ready?).and_return(false)
+      end
 
-    it 'if player is not ready round can not be played' do
-      player_one = TicTacToe::FakePlayer.new('a', 5)
-      allow(player_one).to receive(:ready?).and_return(false)
-      game = described_class.new(player_one, player_two, board_with('         '), display)
+      it 'does not play a round when next player is not ready' do
+        game.play_next_round
+        expect(game.round_could_be_played).to eq false
+      end
 
-      expect(game.round_could_be_played).to eq false
+      it 'is still ongoing when a player is not ready yet' do
+        game.play_next_round
+        expect(game.is_ongoing?).to eq true
+      end
+
+      it 'is not ready anymore when a player is not ready' do
+        game.play_next_round
+        expect(game.is_ready?).to eq false
+      end
     end
   end
 
